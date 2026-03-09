@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { User, Shield, X, ChevronRight } from "lucide-react";
+// Framer Motion fully removed for performance
+import { User, Shield, X } from "lucide-react";
 import { useState } from "react";
 
 interface TeamMember {
@@ -17,21 +17,16 @@ interface TeamMember {
 function MemberCard({
   member,
   featured = false,
-  delay = 0,
   onClick,
 }: {
   member: TeamMember;
   featured?: boolean;
-  delay?: number;
   onClick: () => void;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
+    <div
       onClick={onClick}
-      className={`group relative rounded-2xl overflow-hidden transition-all duration-500 cursor-pointer ${
+      className={`group relative rounded-2xl overflow-hidden cursor-pointer ${
         featured
           ? "border-2 border-gold-500/50 shadow-2xl shadow-gold-500/10 hover:shadow-gold-500/20 hover:border-gold-500/70"
           : "border border-slate-200 dark:border-navy-700/50 shadow-lg hover:border-gold-500/40 hover:shadow-xl"
@@ -40,33 +35,31 @@ function MemberCard({
       {/* Photo */}
       <div className="aspect-[3/4] relative bg-gradient-to-br from-navy-800 to-navy-900">
         {member.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={member.photoUrl}
+            src={require("../../lib/sanity").urlFor(member.photoUrl).width(400).auto('format').url()}
             alt={member.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            className="w-full h-full object-cover"
+            loading="lazy"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-navy-800 dark:to-navy-900">
             <User size={featured ? 72 : 48} className="text-slate-300 dark:text-navy-700" />
           </div>
         )}
-
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+        {/* Info overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+          <p className={`text-[11px] font-bold tracking-[0.15em] uppercase mb-1 ${
+            featured ? "text-gold-400" : "text-gold-400/70"
+          }`}>
+            {member.position}
+          </p>
+          <h3 className={`text-white font-bold leading-snug ${featured ? "text-lg sm:text-xl" : "text-sm sm:text-base"}`}>
+            {member.name}
+          </h3>
+        </div>
       </div>
-
-      {/* Info overlay */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-        <p className={`text-[11px] font-bold tracking-[0.15em] uppercase mb-1 ${
-          featured ? "text-gold-400" : "text-gold-400/70"
-        }`}>
-          {member.position}
-        </p>
-        <h3 className={`text-white font-bold leading-snug ${featured ? "text-lg sm:text-xl" : "text-sm sm:text-base"}`}>
-          {member.name}
-        </h3>
-      </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -78,28 +71,23 @@ function ProfilePopup({
   onClose: () => void;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      <div
         className="bg-white dark:bg-navy-900 rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200 dark:border-navy-700 my-auto max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Photo */}
         <div className="aspect-square relative bg-gradient-to-br from-slate-100 to-slate-200 dark:from-navy-800 dark:to-navy-900">
           {member.photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={member.photoUrl}
+              src={require("../../lib/sanity").urlFor(member.photoUrl).width(600).auto('format').url()}
               alt={member.name}
               className="w-full h-full object-cover"
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
@@ -128,8 +116,8 @@ function ProfilePopup({
             </p>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -170,12 +158,7 @@ export default function TeamsClient({ team }: { team: TeamMember[] }) {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-10"
-        >
+        <div className="text-center mb-10">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-slate-100 dark:bg-navy-800 text-gold-500 dark:text-gold-400 border border-slate-200 dark:border-navy-700 mb-4">
             <Shield size={12} />
             Our People
@@ -186,16 +169,11 @@ export default function TeamsClient({ team }: { team: TeamMember[] }) {
           <p className="text-slate-500 dark:text-navy-300 mt-4 max-w-lg mx-auto">
             The dedicated individuals driving SOIES Nepal forward.
           </p>
-        </motion.div>
+        </div>
 
         {/* Committee Tabs */}
         {committees.length > 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12"
-          >
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12">
             {committees.map((name) => (
               <button
                 key={name}
@@ -207,90 +185,70 @@ export default function TeamsClient({ team }: { team: TeamMember[] }) {
                 }`}
               >
                 {activeCommittee === name && (
-                  <motion.span
-                    layoutId="committeeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-gold-500 to-gold-600 rounded-full"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
+                  <span className="absolute inset-0 bg-gradient-to-r from-gold-500 to-gold-600 rounded-full" />
                 )}
                 <span className="relative z-10">{name}</span>
               </button>
             ))}
-          </motion.div>
+          </div>
         )}
 
         {/* Single committee - show name as subtitle */}
         {committees.length === 1 && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center text-gold-500 dark:text-gold-400 font-semibold tracking-wide text-sm uppercase mb-12"
-          >
+          <p className="text-center text-gold-500 dark:text-gold-400 font-semibold tracking-wide text-sm uppercase mb-12">
             {committees[0]}
-          </motion.p>
+          </p>
         )}
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCommittee}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.35 }}
-          >
-            {/* Row 1: VP — President (featured) — Secretary */}
-            <div className="mb-10 sm:mb-14">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto items-end">
-                {/* VP */}
-                <div className="order-2 sm:order-1 self-end">
-                  {vp && <MemberCard member={vp} delay={0.15} onClick={() => setSelectedMember(vp)} />}
-                </div>
-                {/* President — spans full width on mobile */}
-                <div className="order-1 sm:order-2 col-span-2 sm:col-span-1 self-start sm:-mt-4 max-w-[280px] sm:max-w-none mx-auto w-full">
-                  {president && <MemberCard member={president} featured delay={0} onClick={() => setSelectedMember(president)} />}
-                </div>
-                {/* Secretary */}
-                <div className="order-3 self-end">
-                  {secretary && <MemberCard member={secretary} delay={0.15} onClick={() => setSelectedMember(secretary)} />}
-                </div>
-              </div>
+        {/* Row 1: VP — President (featured) — Secretary */}
+        <div className="mb-10 sm:mb-14">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto items-end">
+            {/* VP */}
+            <div className="order-2 sm:order-1 self-end">
+              {vp && <MemberCard member={vp} onClick={() => setSelectedMember(vp)} />}
             </div>
+            {/* President — spans full width on mobile */}
+            <div className="order-1 sm:order-2 col-span-2 sm:col-span-1 self-start sm:-mt-4 max-w-[280px] sm:max-w-none mx-auto w-full">
+              {president && <MemberCard member={president} featured onClick={() => setSelectedMember(president)} />}
+            </div>
+            {/* Secretary */}
+            <div className="order-3 self-end">
+              {secretary && <MemberCard member={secretary} onClick={() => setSelectedMember(secretary)} />}
+            </div>
+          </div>
+        </div>
 
-            {/* Row 2 */}
-            {row2.length > 0 && (
-              <div className="mb-10 sm:mb-14">
-                <div className="flex flex-wrap justify-center gap-4 sm:gap-5 max-w-5xl mx-auto">
-                  {row2.map((member, i) => (
-                    <div key={member._id} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.875rem)] lg:w-[calc(20%-1rem)]">
-                      <MemberCard member={member} delay={0.25 + i * 0.08} onClick={() => setSelectedMember(member)} />
-                    </div>
-                  ))}
+        {/* Row 2 */}
+        {row2.length > 0 && (
+          <div className="mb-10 sm:mb-14">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-5 max-w-5xl mx-auto">
+              {row2.map((member) => (
+                <div key={member._id} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.875rem)] lg:w-[calc(20%-1rem)]">
+                  <MemberCard member={member} onClick={() => setSelectedMember(member)} />
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
+          </div>
+        )}
 
-            {/* Row 3: Remaining members */}
-            {row3.length > 0 && (
-              <div>
-                <div className="flex flex-wrap justify-center gap-4 sm:gap-5 max-w-4xl mx-auto">
-                  {row3.map((member, i) => (
-                    <div key={member._id} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.875rem)] lg:w-[calc(25%-0.9375rem)]">
-                      <MemberCard member={member} delay={0.4 + i * 0.06} onClick={() => setSelectedMember(member)} />
-                    </div>
-                  ))}
+        {/* Row 3: Remaining members */}
+        {row3.length > 0 && (
+          <div>
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-5 max-w-4xl mx-auto">
+              {row3.map((member) => (
+                <div key={member._id} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.875rem)] lg:w-[calc(25%-0.9375rem)]">
+                  <MemberCard member={member} onClick={() => setSelectedMember(member)} />
                 </div>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-      {/* Profile popup */}
-      <AnimatePresence>
+        {/* Profile popup */}
         {selectedMember && (
           <ProfilePopup member={selectedMember} onClose={() => setSelectedMember(null)} />
         )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 }

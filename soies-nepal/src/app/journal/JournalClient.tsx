@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+// Framer Motion fully removed for performance
 import { Download, FileText, BookOpen, Pen, Sparkles, Clock } from "lucide-react";
 
 interface Journal {
@@ -16,39 +16,20 @@ export default function JournalClient({ journals }: { journals: Journal[] }) {
   return (
     <div className="min-h-screen bg-white dark:bg-navy-950 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-slate-100 dark:bg-navy-800 text-gold-500 dark:text-gold-400 border border-slate-200 dark:border-navy-700 mb-4">
             Publications
           </span>
           <h1 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white">
             Journal of <span className="gradient-text">Industrial Vision</span>
           </h1>
-        </motion.div>
+        </div>
 
         {journals.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="relative overflow-hidden bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-navy-800/50 rounded-2xl p-10 sm:p-16 text-center"
-          >
+          <div className="relative overflow-hidden bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-navy-800/50 rounded-2xl p-10 sm:p-16 text-center">
             {/* Decorative background elements */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                className="absolute -top-20 -right-20 w-40 h-40 border border-gold-500/10 rounded-full"
-              />
-              <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-                className="absolute -bottom-16 -left-16 w-32 h-32 border border-gold-500/10 rounded-full"
-              />
+              {/* Removed animated divs */}
               <div className="absolute top-8 left-8 text-gold-500/5">
                 <BookOpen size={80} />
               </div>
@@ -58,13 +39,9 @@ export default function JournalClient({ journals }: { journals: Journal[] }) {
             </div>
 
             <div className="relative z-10">
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gold-500/10 dark:bg-gold-500/10 mb-6"
-              >
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gold-500/10 dark:bg-gold-500/10 mb-6">
                 <Sparkles size={36} className="text-gold-500" />
-              </motion.div>
+              </div>
 
               <h3 className="text-slate-900 dark:text-white font-bold text-2xl sm:text-3xl mb-3">
                 Coming Soon
@@ -80,35 +57,19 @@ export default function JournalClient({ journals }: { journals: Journal[] }) {
               </div>
 
               {/* Decorative timeline dots */}
-              <div className="flex items-center justify-center gap-3 mt-8">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <motion.div
-                    key={i}
-                    className="w-2 h-2 rounded-full bg-gold-500"
-                    animate={{ opacity: [0.2, 1, 0.2] }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      delay: i * 0.3,
-                    }}
-                  />
-                ))}
-              </div>
+              {/* Removed animated timeline dots */}
             </div>
-          </motion.div>
+          </div>
         ) : (
           <div className="space-y-4">
             {journals.map((journal, i) => (
-              <motion.div
+              <div
                 key={journal._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-                className="flex items-center gap-5 p-5 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-navy-800/50 rounded-xl hover:border-gold-500/30 transition-all card-hover"
+                className="flex items-center gap-5 p-5 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-navy-800/50 rounded-xl hover:border-gold-500/30 card-hover"
               >
                 <div className="w-14 h-14 rounded-lg bg-slate-100 dark:bg-navy-800 flex items-center justify-center shrink-0 overflow-hidden">
                   {journal.cover ? (
-                    <img src={journal.cover} alt={journal.title} className="w-full h-full object-cover" loading="lazy" />
+                    <img src={journal.cover} alt={journal.title} className="w-full h-full object-cover" loading="eager" fetchPriority="high" />
                   ) : (
                     <FileText size={24} className="text-gold-400" />
                   )}
@@ -130,7 +91,7 @@ export default function JournalClient({ journals }: { journals: Journal[] }) {
                     <Download size={14} /> Download
                   </a>
                 )}
-              </motion.div>
+              </div>
             ))}
           </div>
         )}

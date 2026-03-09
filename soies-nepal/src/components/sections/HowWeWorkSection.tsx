@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+// Removed framer-motion for performance
 
 const workItems = [
   {
@@ -42,8 +41,7 @@ const workItems = [
 ];
 
 export default function HowWeWorkSection() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+
 
   return (
     <section className="py-24 bg-slate-50 dark:bg-navy-900 relative overflow-hidden">
@@ -58,29 +56,21 @@ export default function HowWeWorkSection() {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10" ref={ref}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div className="text-center mb-16">
           <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-white dark:bg-navy-800 text-gold-500 dark:text-gold-400 border border-slate-200 dark:border-navy-700 mb-4">
             Our Process
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white">
             How we <span className="gradient-text">work?</span>
           </h2>
-        </motion.div>
+        </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {workItems.map((item, i) => (
-            <motion.div
+            <div
               key={item.title}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className={`group relative p-6 rounded-2xl bg-white dark:bg-navy-950/50 border border-slate-200 dark:border-navy-800/50 hover:border-gold-500/30 transition-all card-hover overflow-hidden ${
+              className={`group relative p-6 rounded-2xl bg-white dark:bg-navy-950/50 border border-slate-200 dark:border-navy-800/50 hover:border-gold-500/30 card-hover overflow-hidden ${
                 i === 3 ? "sm:col-span-2 lg:col-span-1" : ""
               }`}
             >
@@ -89,9 +79,11 @@ export default function HowWeWorkSection() {
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                  fetchPriority="high"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-white/80 dark:from-navy-950/80 to-transparent" />
+                {/* Removed white glow overlay for performance and clarity */}
               </div>
 
               <div className="relative z-10">
@@ -102,7 +94,7 @@ export default function HowWeWorkSection() {
                   {item.description}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

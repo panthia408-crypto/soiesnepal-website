@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+// Framer Motion fully removed for performance
 import {
   MessageCircle,
   BookOpen,
@@ -48,12 +48,7 @@ export default function CommunityPage() {
     <div className="min-h-screen bg-white dark:bg-navy-950 py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-20"
-        >
+        <div className="text-center mb-20">
           <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-slate-100 dark:bg-navy-800 text-gold-500 dark:text-gold-400 border border-slate-200 dark:border-navy-700 mb-4">
             Community
           </span>
@@ -84,17 +79,14 @@ export default function CommunityPage() {
               Learn More
             </a>
           </div>
-        </motion.div>
+        </div>
 
         {/* Features */}
         <div id="features" className="grid sm:grid-cols-2 gap-6 mb-20">
           {features.map((feature, i) => (
-            <motion.div
+            <div
               key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="p-6 bg-white dark:bg-navy-900/50 border border-slate-200 dark:border-navy-800/50 rounded-2xl hover:border-gold-500/30 transition-all card-hover group"
+              className="p-6 bg-white dark:bg-navy-900/50 border border-slate-200 dark:border-navy-800/50 rounded-2xl hover:border-gold-500/30 card-hover group"
             >
               <div
                 className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}
@@ -107,17 +99,12 @@ export default function CommunityPage() {
               <p className="text-slate-500 dark:text-navy-300 text-sm leading-relaxed">
                 {feature.description}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="grid grid-cols-3 gap-6 mb-20"
-        >
+        <div className="grid grid-cols-3 gap-6 mb-20">
           {[
             { icon: Users, value: "200+", label: "Community Members" },
             { icon: MessageCircle, value: "1000+", label: "Messages Shared" },
@@ -137,15 +124,10 @@ export default function CommunityPage() {
               <p className="text-slate-500 dark:text-navy-400 text-sm">{stat.label}</p>
             </div>
           ))}
-        </motion.div>
+            </div>
 
         {/* How to Join */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="bg-gradient-to-br from-slate-100 dark:from-navy-900 to-slate-50 dark:to-navy-800 border border-slate-200 dark:border-navy-700/50 rounded-2xl p-8 sm:p-12 text-center"
-        >
+        <div className="bg-gradient-to-br from-slate-100 dark:from-navy-900 to-slate-50 dark:to-navy-800 border border-slate-200 dark:border-navy-700/50 rounded-2xl p-8 sm:p-12 text-center">
           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-4">
             Ready to Join?
           </h2>
@@ -160,7 +142,7 @@ export default function CommunityPage() {
           >
             <ExternalLink size={18} /> Join SOIES Community
           </a>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

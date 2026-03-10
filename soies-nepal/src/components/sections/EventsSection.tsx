@@ -1,5 +1,5 @@
-"use client";
 
+"use client";
 
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
@@ -16,10 +16,6 @@ interface Event {
   winnerName?: string;
   tutorName?: string;
   images?: string[];
-}
-
-interface EventsSectionProps {
-  events: Event[];
 }
 
 const placeholderEvents: Event[] = [
@@ -95,17 +91,22 @@ function formatDate(dateStr: string) {
     return { month: "TBD", day: 0, year: 0, full: "TBD" };
   }
 }
-
-export default function EventsSection({ events }: EventsSectionProps) {
+export default function EventsSection({ events = [], showAll }: { events?: Event[]; showAll?: boolean }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [activeTab, setActiveTab] = useState<"completed" | "upcoming">("completed");
+  const [visibleCount, setVisibleCount] = useState(5); // Show 5 events initially
+  useEffect(() => { setVisibleCount(5); }, [activeTab]);
   const allEvents = events.length > 0 ? events : placeholderEvents;
   const completedEvents = allEvents.filter((e) => e.status !== "upcoming");
   const upcomingEvents = allEvents.filter((e) => e.status === "upcoming").sort(
     (a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
   );
-  const displayEvents = activeTab === "completed" ? completedEvents : upcomingEvents;
+  const currentEvents = activeTab === "completed" ? completedEvents : upcomingEvents;
+  const displayEvents = (typeof showAll !== "undefined" && showAll)
+    ? currentEvents
+    : currentEvents.slice(0, visibleCount);
+
 
   return (
     <section id="events" className="py-24 bg-slate-50 dark:bg-navy-950 relative overflow-hidden">
@@ -127,76 +128,11 @@ export default function EventsSection({ events }: EventsSectionProps) {
           animate={{ x: [0, 80, -60, 0], y: [0, -70, 40, 0] }}
           transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
         />
-
-        {/* Animated grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.04]"
-          style={{
-            backgroundImage: `radial-gradient(circle, currentColor 1px, transparent 1px)`,
-            backgroundSize: "40px 40px",
-          }}
-        />
-
-        {/* Floating particles */}
-        {[...Array(80)].map((_, i) => {
-          const size = i % 5 === 0 ? "w-3 h-3" : i % 5 === 1 ? "w-2.5 h-2.5" : i % 5 === 2 ? "w-2 h-2" : i % 5 === 3 ? "w-1.5 h-1.5" : "w-1 h-1";
-          const colors = [
-            "bg-gold-400 dark:bg-gold-400",
-            "bg-red-300 dark:bg-red-400",
-            "bg-rose-400 dark:bg-rose-400",
-            "bg-pink-300 dark:bg-pink-300",
-            "bg-red-200 dark:bg-red-300",
-          ];
-          const dur = 4 + (i % 7) * 0.8;
-          return (
-            <motion.div
-              key={i}
-              className={`absolute ${size} rounded-full ${colors[i % 5]} shadow-sm`}
-              style={{
-                top: `${(i * 1.25) % 98}%`,
-                left: `${(3 + i * 7.3) % 96}%`,
-              }}
-              initial={{ opacity: 0.45, scale: 0.8 }}
-              animate={{
-                y: [0, -(40 + (i % 5) * 20), 15 + (i % 3) * 8, 0],
-                x: [0, (i % 2 === 0 ? 30 + (i % 4) * 10 : -(30 + (i % 4) * 10)), (i % 2 === 0 ? -12 : 12), 0],
-                opacity: [0.45, 0.8, 0.65, 0.45],
-                scale: [0.8, 1.15, 1, 0.8],
-              }}
-              transition={{
-                duration: dur,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: (i * 0.07) % dur,
-              }}
-            />
-          );
-        })}
-
-        {/* Rising shimmer lines */}
-        {[...Array(4)].map((_, i) => (
-          <motion.div
-            key={`line-${i}`}
-            className="absolute w-px bg-gradient-to-t from-transparent via-gold-500/20 to-transparent"
-            style={{
-              left: `${20 + i * 20}%`,
-              height: "120px",
-            }}
-            animate={{ y: ["100vh", "-120px"] }}
-            transition={{
-              duration: 8 + i * 2,
-              repeat: Infinity,
-              ease: "linear",
-              delay: i * 2.5,
-            }}
-          />
-        ))}
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10" ref={ref}>
-        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
@@ -210,7 +146,6 @@ export default function EventsSection({ events }: EventsSectionProps) {
           <p className="text-slate-500 dark:text-navy-400 mt-4 max-w-xl mx-auto">
             Stay updated with the latest activities organized by SOIES Nepal.
           </p>
-
           {/* Tab switcher */}
           <div className="flex items-center justify-center mt-8 gap-1 p-1 rounded-full bg-slate-200/70 dark:bg-navy-800/70 w-fit mx-auto border border-slate-300/50 dark:border-navy-700/50">
             <button
@@ -265,6 +200,63 @@ export default function EventsSection({ events }: EventsSectionProps) {
             </button>
           </div>
         </motion.div>
+
+        {/* Floating particles and shimmer lines */}
+        <div className="absolute inset-0 pointer-events-none z-0" aria-hidden="true">
+          {/* Floating particles */}
+          {[...Array(80)].map((_, i) => {
+            const size = i % 5 === 0 ? "w-3 h-3" : i % 5 === 1 ? "w-2.5 h-2.5" : i % 5 === 2 ? "w-2 h-2" : i % 5 === 3 ? "w-1.5 h-1.5" : "w-1 h-1";
+            const colors = [
+              "bg-gold-400 dark:bg-gold-400",
+              "bg-red-300 dark:bg-red-400",
+              "bg-rose-400 dark:bg-rose-400",
+              "bg-pink-300 dark:bg-pink-300",
+              "bg-red-200 dark:bg-red-300",
+            ];
+            const dur = 4 + (i % 7) * 0.8;
+            return (
+              <motion.div
+                key={i}
+                className={`absolute ${size} rounded-full ${colors[i % 5]} shadow-sm`}
+                style={{
+                  top: `${(i * 1.25) % 98}%`,
+                  left: `${(3 + i * 7.3) % 96}%`,
+                }}
+                initial={{ opacity: 0.45, scale: 0.8 }}
+                animate={{
+                  y: [0, -(40 + (i % 5) * 20), 15 + (i % 3) * 8, 0],
+                  x: [0, (i % 2 === 0 ? 30 + (i % 4) * 10 : -(30 + (i % 4) * 10)), (i % 2 === 0 ? -12 : 12), 0],
+                  opacity: [0.45, 0.8, 0.65, 0.45],
+                  scale: [0.8, 1.15, 1, 0.8],
+                }}
+                transition={{
+                  duration: dur,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: (i * 0.07) % dur,
+                }}
+              />
+            );
+          })}
+          {/* Rising shimmer lines */}
+          {[...Array(4)].map((_, i) => (
+            <motion.div
+              key={`line-${i}`}
+              className="absolute w-px bg-gradient-to-t from-transparent via-gold-500/20 to-transparent"
+              style={{
+                left: `${20 + i * 20}%`,
+                height: "120px",
+              }}
+              animate={{ y: ["100vh", "-120px"] }}
+              transition={{
+                duration: 8 + i * 2,
+                repeat: Infinity,
+                ease: "linear",
+                delay: i * 2.5,
+              }}
+            />
+          ))}
+        </div>
 
         {/* Timeline */}
         <AnimatePresence mode="wait">
@@ -430,6 +422,17 @@ export default function EventsSection({ events }: EventsSectionProps) {
               );
             })}
           </div>
+          {/* View More button logic (only if not showAll) */}
+          {!showAll && currentEvents.length > 5 && visibleCount < currentEvents.length && (
+            <div className="flex flex-col items-center mt-10 gap-4">
+              <a
+                href="/events"
+                className="px-6 py-2 rounded-full bg-gold-500 hover:bg-gold-600 text-white font-semibold shadow-lg transition-all duration-300"
+              >
+                View More
+              </a>
+            </div>
+          )}
 
           {/* Timeline end cap (decorative) */}
           <motion.div
@@ -444,6 +447,7 @@ export default function EventsSection({ events }: EventsSectionProps) {
           </>
           )}
         </motion.div>
+        {/* visibleCount resets on tab change via useEffect */}
         </AnimatePresence>
       </div>
     </section>

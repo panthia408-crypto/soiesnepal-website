@@ -2,17 +2,19 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+// === GRAVITY BOMB EASTER EGG (easy to remove) ===
+// Triggers a global event for the overlay
 import { Target, Lightbulb, Cog } from "lucide-react";
 
 const initialFacts: string[] = [
   "Industrial Engineering (IE) focuses on optimizing complex systems.",
-  "IE at IOE Pulchowk started in the 1960s.",
+  "IE is offered only at Thapathali Campus under IOE, TU.",
   "Thapathali Campus is under IOE, TU.",
   "SOIES stands for Society of Industrial Engineering Students.",
   "IE uses tools like Pareto rule, Gantt charts, and Six Sigma.",
   "Subjects include Thermodynamics, Fluid Mechanics, Quality Control.",
-  "Nepal introduced IE curriculum in 1961 at Pulchowk.",
+  "Nepal introduced the IE curriculum at Thapathali Campus.",
   "IOE was established in 1930 by the Nepalese government.",
   "Industrial engineers often work in manufacturing and healthcare.",
   "Thapathali campus is located in central Kathmandu.",
@@ -21,7 +23,7 @@ const initialFacts: string[] = [
   "IOE is affiliated to Tribhuvan University.",
   "IE graduates can become operations managers or consultants.",
   "IE combines engineering, math, and management principles.",
-  "Nepal's first IE department was at Pulchowk Campus.",
+  "Nepal's first IE department was at Thapathali Campus.",
   "Thapathali has CAD and other engineering labs.",
   "Many IE students intern at NEA and NOC.",
   "IE plays a role in improving supply chain systems.",
@@ -33,6 +35,8 @@ export default function AboutSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [currentFact, setCurrentFact] = useState<string | null>(null);
+  // Easter egg state
+  // No local gravityBomb state; use global event
 
   const factPool = useRef<string[]>([...initialFacts]);
 
@@ -46,8 +50,12 @@ export default function AboutSection() {
     return fact;
   };
 
+
   return (
-    <section id="about" className="py-24 bg-white dark:bg-navy-950 relative overflow-hidden">
+    <section
+      id="about"
+      className="py-24 bg-white dark:bg-navy-950 relative overflow-hidden"
+    >
       {/* Background decoration */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gold-500/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-72 h-72 bg-navy-600/10 rounded-full blur-3xl" />
@@ -136,30 +144,61 @@ export default function AboutSection() {
                 </div>
               </motion.div>
             ))}
-          {/* random facts button under features */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.5 }}
-            className="text-center mt-6"
-          >
-            <button
-              onClick={() => {
-                setCurrentFact(generateFact());
-              }}
-              className="px-5 py-2 bg-gold-500 text-white rounded-lg shadow hover:bg-gold-600 transition-colors"
+            {/* random facts button under features */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.5 }}
+              className="text-center mt-6"
             >
-              Random IE Fact
-            </button>
-            {currentFact && (
-              <p className="mt-3 text-sm text-slate-700 dark:text-navy-300">
-                💡 {currentFact}
-              </p>
-            )}
-          </motion.div>
+              <button
+                onClick={() => {
+                  setCurrentFact(generateFact());
+                }}
+                className="px-5 py-2 bg-gold-500 text-white rounded-lg shadow hover:bg-gold-600 transition-colors"
+              >
+                Random IE Fact
+              </button>
+              {currentFact && (
+                <p className="mt-3 text-sm text-slate-700 dark:text-navy-300">
+                  💡 {currentFact}
+                </p>
+              )}
+            </motion.div>
+            {/* === GRAVITY BOMB EASTER EGG: Overlay is now global === */}
           </motion.div>
         </div>
       </div>
+      {/* === GRAVITY BOMB EASTER EGG: CSS === */}
+      <style jsx global>{`
+        .gravity-bomb-shake {
+          animation: shake 0.7s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+          10%, 90% { transform: translate3d(-2px, 0, 0); }
+          20%, 80% { transform: translate3d(4px, 0, 0); }
+          30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+          40%, 60% { transform: translate3d(8px, 0, 0); }
+        }
+        .gravity-fact {
+          position: absolute;
+          top: 0;
+          font-size: 1rem;
+          background: rgba(255,255,255,0.95);
+          color: #bfa14a;
+          border-radius: 0.5rem;
+          padding: 0.5rem 1rem;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          pointer-events: none;
+          animation: gravity-fall 1.7s cubic-bezier(.2,.7,.4,1) forwards;
+        }
+        @keyframes gravity-fall {
+          0% { top: 0; opacity: 1; }
+          80% { opacity: 1; }
+          100% { top: 90vh; opacity: 0.7; }
+        }
+      `}</style>
+      {/* === END GRAVITY BOMB EASTER EGG === */}
     </section>
   );
 }

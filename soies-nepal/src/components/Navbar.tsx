@@ -22,7 +22,7 @@ const mainLinks = [
   { href: "/#home", label: "Home" },
   { href: "/library", label: "Library" },
   { href: "/#about", label: "About" },
-  { href: "/#events", label: "Events" },
+  { href: "/events", label: "Events" },
 ];
 
 export default function Navbar() {

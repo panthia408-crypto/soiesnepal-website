@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+// === GRAVITY BOMB EASTER EGG (easy to remove) ===
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -56,11 +59,13 @@ export default function RootLayout({
         <link rel="canonical" href="https://soiesnepal.org/" />
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-slate-50 dark:bg-navy-950 text-slate-900 dark:text-white`}>
-        <ThemeProvider>
-          <Navbar />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-        </ThemeProvider>
+        {/* GravityBombClientWrapper removed */}
+          <ThemeProvider>
+            <Navbar />
+            <main className="min-h-screen">{children}</main>
+            <Footer />
+          </ThemeProvider>
+        {/* GravityBombClientWrapper removed */}
       </body>
     </html>
   );

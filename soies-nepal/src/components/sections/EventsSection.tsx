@@ -1,7 +1,9 @@
 "use client";
 
+
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
+import Image from "next/image";
 import { Trophy, BookOpen, Calendar, Clock, Sparkles } from "lucide-react";
 
 interface Event {
@@ -303,8 +305,9 @@ export default function EventsSection({ events }: EventsSectionProps) {
 
               return (
                 <div key={event._id} className="relative">
-                  {/* Timeline dot */}
+                  {/* Timeline dot (decorative) */}
                   <motion.div
+                    aria-hidden="true"
                     initial={{ scale: 0, opacity: 0 }}
                     animate={inView ? { scale: 1, opacity: 1 } : {}}
                     transition={{ duration: 0.5, delay: i * 0.15 + 0.3 }}
@@ -361,11 +364,14 @@ export default function EventsSection({ events }: EventsSectionProps) {
                       {hasImages && (
                         <div className="grid grid-cols-2 gap-0.5 bg-slate-200 dark:bg-navy-800">
                           {event.images!.slice(0, 4).map((img, idx) => (
-                            <div key={idx} className="aspect-[4/3] overflow-hidden">
-                              <img
+                            <div key={idx} className="aspect-[4/3] overflow-hidden relative">
+                              <Image
                                 src={img}
-                                alt={`${event.title} - ${idx + 1}`}
+                                alt={`Event: ${event.title} - Image ${idx + 1}`}
+                                fill
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                loading={idx < 2 ? "eager" : "lazy"}
+                                priority={idx === 0}
                               />
                             </div>
                           ))}
@@ -425,8 +431,9 @@ export default function EventsSection({ events }: EventsSectionProps) {
             })}
           </div>
 
-          {/* Timeline end cap */}
+          {/* Timeline end cap (decorative) */}
           <motion.div
+            aria-hidden="true"
             initial={{ scale: 0, opacity: 0 }}
             animate={inView ? { scale: 1, opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: displayEvents.length * 0.15 + 0.5 }}

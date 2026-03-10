@@ -3,6 +3,7 @@
 // Framer Motion fully removed for performance
 import { User, Shield, X } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 
 interface TeamMember {
   _id: string;
@@ -26,6 +27,10 @@ function MemberCard({
   return (
     <div
       onClick={onClick}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
+      role="button"
+      tabIndex={0}
+      aria-label={`View profile of ${member.name}`}
       className={`group relative rounded-2xl overflow-hidden cursor-pointer ${
         featured
           ? "border-2 border-gold-500/50 shadow-2xl shadow-gold-500/10 hover:shadow-gold-500/20 hover:border-gold-500/70"
@@ -35,10 +40,10 @@ function MemberCard({
       {/* Photo */}
       <div className="aspect-[3/4] relative bg-gradient-to-br from-navy-800 to-navy-900">
         {member.photoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={require("../../lib/sanity").urlFor(member.photoUrl).width(400).auto('format').url()}
-            alt={member.name}
+            alt={`Portrait of ${member.name}`}
+            fill
             className="w-full h-full object-cover"
             loading="lazy"
           />
@@ -82,10 +87,10 @@ function ProfilePopup({
         {/* Photo */}
         <div className="aspect-square relative bg-gradient-to-br from-slate-100 to-slate-200 dark:from-navy-800 dark:to-navy-900">
           {member.photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={require("../../lib/sanity").urlFor(member.photoUrl).width(600).auto('format').url()}
-              alt={member.name}
+              alt={`Portrait of ${member.name}`}
+              fill
               className="w-full h-full object-cover"
               loading="lazy"
             />

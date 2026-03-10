@@ -1,6 +1,7 @@
 "use client";
 
 // Removed framer-motion for performance
+import Image from "next/image";
 
 const workItems = [
   {
@@ -76,12 +77,12 @@ export default function HowWeWorkSection() {
             >
               {/* Image banner */}
               <div className="h-48 -mx-6 -mt-6 mb-5 overflow-hidden relative">
-                <img
+                <Image
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                  fetchPriority="high"
+                  fill
+                  className="object-cover"
+                  priority={i < 2}
                 />
                 {/* Removed white glow overlay for performance and clarity */}
               </div>

@@ -3,52 +3,12 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Image as ImageIcon, FileText, ExternalLink } from "lucide-react";
-
-interface Notice {
-  _id: string;
-  title: string;
-  description?: string;
-  category?: string;
-  imageUrl?: string;
-  pdf?: string;
-}
+import { placeholderNotices, Notice } from "@/constants";
+import Image from "next/image";
 
 interface NoticeSectionProps {
   notices: Notice[];
 }
-
-// Placeholder data when Sanity is not connected
-const placeholderNotices: Notice[] = [
-  {
-    _id: "1",
-    title: "Orientation and Class Notice",
-    category: "academic",
-  },
-  {
-    _id: "2",
-    title: "To Whom It May Concern",
-    description:
-      "This is to formally inform all members that Ms. Prashuna Thapa, Executive Member and Research & Workshop Coordinator of SOIES Nepal, has...",
-    category: "administrative",
-  },
-  {
-    _id: "3",
-    title: "Research Paper Writing Seminar",
-    category: "event",
-  },
-  {
-    _id: "4",
-    title: "Call for Article - Industrial Vision",
-    category: "academic",
-  },
-  {
-    _id: "5",
-    title: "Discord Server Launch",
-    description:
-      "SOIES Nepal has launched its official Discord server to provide students with a central platform for collaboration and learning.",
-    category: "other",
-  },
-];
 
 export default function NoticeSection({ notices }: NoticeSectionProps) {
   const ref = useRef(null);
@@ -86,10 +46,12 @@ export default function NoticeSection({ notices }: NoticeSectionProps) {
               {/* Notice Image/Document Preview */}
               <div className="h-48 bg-slate-100 dark:bg-navy-800/50 flex items-center justify-center overflow-hidden">
                 {notice.imageUrl ? (
-                  <img
+                  <Image
                     src={notice.imageUrl}
-                    alt={notice.title}
+                    alt={`Notice: ${notice.title}`}
+                    fill
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="flex flex-col items-center text-navy-500">

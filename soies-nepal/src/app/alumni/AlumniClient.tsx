@@ -1,7 +1,9 @@
 "use client";
 
+
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { Search, ChevronLeft, ChevronRight, ArrowUpDown, Users, GraduationCap, Briefcase, TrendingUp, X } from "lucide-react";
 
 interface Alumni {
@@ -42,7 +44,14 @@ function ProfilePopup({ alumnus, onClose }: { alumnus: Alumni; onClose: () => vo
 
           <div className="h-48 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
             {alumnus.photoUrl ? (
-              <img src={alumnus.photoUrl} alt={alumnus.name} className="w-full h-full object-cover" loading="lazy" />
+              <Image
+                src={alumnus.photoUrl}
+                alt={`Portrait of ${alumnus.name}`}
+                width={192}
+                height={192}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
             ) : (
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center">
                 <span className="text-navy-950 font-black text-4xl">{alumnus.name.charAt(0)}</span>
@@ -248,7 +257,14 @@ export default function AlumniClient({ alumni }: { alumni: Alumni[] }) {
                 >
                   <div className="flex items-start gap-4">
                     {alumnus.photoUrl ? (
-                      <img src={alumnus.photoUrl} alt={alumnus.name} className="w-12 h-12 rounded-full object-cover shrink-0" loading="lazy" />
+                      <Image
+                        src={alumnus.photoUrl}
+                        alt={`Portrait of ${alumnus.name}`}
+                        width={48}
+                        height={48}
+                        className="w-12 h-12 rounded-full object-cover shrink-0"
+                        loading="lazy"
+                      />
                     ) : (
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-navy-950 font-bold text-lg shrink-0">
                         {alumnus.name.charAt(0)}

@@ -57,7 +57,16 @@ function generateParticles(count: number): Particle[] {
   }));
 }
 
-const PARTICLES = generateParticles(40);
+// particles will be generated on the client only to avoid hydration mismatch
+
+function useParticles(count: number) {
+  // generate once per component instance
+  const ref = useRef<Particle[] | null>(null);
+  if (ref.current === null) {
+    ref.current = generateParticles(count);
+  }
+  return ref.current;
+}
 
 function ParticleIcon({ icon, size }: { icon: Particle["icon"]; size: number }) {
   const props = { size, strokeWidth: 1 };
@@ -395,6 +404,139 @@ export default function LibraryClient({ semesters }: { semesters: Semester[] }) 
 
   const isSearching = query.length > 0;
 
+  // ----- bored learning randomizer -----
+  const refreshItems = [
+    "Take a 5-minute walk",
+    "Listen to your favorite song",
+    "Drink a glass of water",
+    "Do a quick stretch",
+    "Look at something green",
+    "Close your eyes and breathe",
+    "Jot down a fun fact",
+    "Watch a short funny clip",
+    "Call a friend",
+    "Draw a doodle",
+    "Write down one thing you're grateful for",
+    "Look at the sky for a minute",
+    "Stand up and sit down 10 times",
+    "Hum your favorite tune",
+    "Do a 30-second plank",
+    "Read a random Wikipedia page",
+    "Try a tongue twister",
+    "Rotate your wrists and ankles",
+    "Name five countries that start with S",
+    "Sketch the view from your window",
+    "Say the alphabet backwards",
+    "Touch your toes 5 times",
+    "Whistle a melody",
+    "Snap a photo of something interesting",
+    "Write a haiku about today",
+    "List three goals for tomorrow",
+    "Do 10 jumping jacks",
+    "Look for shapes in the clouds",
+    "Crack your knuckles (gently!)",
+    "Try a new food item",
+    "Read a random poem",
+    "Copy a motivational quote",
+    "Practice a deep breathing exercise",
+    "Describe your favorite movie without naming it",
+    "Check the time on your watch/unclock",
+    "Mix a quick snack",
+    "Look up a new word and its meaning",
+    "Try a funny accent for one sentence",
+    "Recite a childhood memory",
+    "Flip something over on your desk",
+    "Write down the last dream you remember",
+    "Stretch your neck slowly",
+    "Close one eye and open the other repeatedly",
+    "Toss a paper ball into a trash can",
+    "Rearrange one item on your desk",
+    "Name five fruits that are red",
+    "Do a small meditation for one minute",
+    "Imagine a peaceful place",
+    `Say "hello" in three different languages`,
+    "Touch your nose with your tongue",
+    "Spin in your chair once",
+    "Draw a quick smiley face",
+    "Recall your first day at school",
+    "Tell yourself a joke silently",
+    "Look at a picture of someone you love",
+    "Write down three things you like about yourself",
+    "Think of a word that rhymes with 'orange'",
+    "Snap your fingers rhythmically",
+    "Shift your chair slightly to the left",
+    "Blow a kiss to yourself",
+    "Think of your favorite dessert",
+    "Fold a paper airplane",
+    "Say 'I am awesome' out loud",
+    "Spin slowly in place",
+    "Touch your right ear with left hand and vice versa",
+    "Think of a random animal and mimic its sound",
+    "Look around and count 10 blue objects",
+    "Gently tap your shoulders 10 times",
+    "Do a quick yoga pose",
+    "Recite three colors of the rainbow",
+    "Write your name with your non-dominant hand",
+    "Imagine you're a superhero for a moment",
+    "Listen for 10 seconds to ambient sounds",
+    "Reach up high and then touch your toes",
+    "Say the first thing that comes to mind",
+    "Look at something small and describe it",
+    "Pucker lips and hold for 5 seconds",
+    "Pretend to play an invisible piano",
+    "Think of a happy memory",
+    "Pat your head and rub your belly",
+    "Count backwards from 20",
+    "Practice a new handshake",
+    "Pretend to juggle",
+    "Write a one-sentence story",
+    "Say 'thank you' to yourself",
+    "Imagine painting with your finger",
+    "Do 5 calf raises",
+    "Say your favorite book title out loud",
+    "Touch each fingertip with your thumb",
+    "Invent a new word",
+    "Smile widely for 10 seconds",
+    "Bounce gently in your seat",
+    "Look at something shiny",
+    "Think of a song you can hum",
+    "Pretend you're in a movie",
+    "Stretch arms wide like a star",
+    "Close eyes and tilt your head side to side",
+    "Whisper the alphabet",
+    "Discuss an idea in your head",
+    "Imagine flying like a bird",
+    "Tap your knee rhythmically",
+    "Take a slow sip of water",
+    "Match two colors around you",
+    "Write a short list of favorite things",
+    "Do a quick handshake with yourself",
+    "Pick a random letter and say five words starting with it",
+    "Think of a place you'd like to visit",
+    "Roll your shoulders forward and back",
+    "Snap a selfie and delete it",
+    "Compliment yourself internally",
+    "Pretend to play a guitar",
+    "Stretch your arms above your head",
+    "Say 'I can do this'",
+    "Think of a season you like",
+    "Blink rapidly for a count of five",
+    "Press your palms together and release",
+    "Think of a famous landmark",
+    "Count how many steps you've taken today",
+    "Pretend to drink from an empty cup",
+    "Look left, then right, then up, then down",
+    "Say your initials backwards",
+    "Touch your heel to your opposite knee",
+    "Think of a color you haven't seen yet",
+    "Hum the first song that comes to mind",
+  ];
+  const [mindRefresh, setMindRefresh] = useState<string | null>(null);
+  const handleRefresh = () => {
+    const choice = refreshItems[Math.floor(Math.random() * refreshItems.length)];
+    setMindRefresh(choice);
+  };
+
   /* quick-filter chips — popular subject keywords */
   const chips = ["Thermodynamics", "Mechanics", "Management", "Mathematics", "Engineering Drawing"];
 
@@ -412,7 +554,7 @@ export default function LibraryClient({ semesters }: { semesters: Semester[] }) 
     <div className="relative min-h-screen bg-white dark:bg-navy-950 overflow-hidden">
       {/* ── Floating particles background ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {PARTICLES.map((p) => (
+        {useParticles(40).map((p) => (
           <motion.div
             key={p.id}
             className="absolute text-gold-500/30 dark:text-gold-400/20"
@@ -492,7 +634,40 @@ export default function LibraryClient({ semesters }: { semesters: Semester[] }) 
             ))}
           </motion.div>
 
-          {/* ── Search Bar ── */}
+          {/* ── Interactive Learning Environment Initiative ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.5 }}
+            className="max-w-2xl mx-auto mb-10"
+          >
+            <div className="flex flex-col sm:flex-row items-center gap-4 bg-gradient-to-br from-gold-50/80 via-white/90 to-navy-50/80 dark:from-navy-900/80 dark:via-navy-950/90 dark:to-navy-900/80 border border-gold-200 dark:border-navy-700 rounded-2xl p-6 shadow-lg">
+              <div className="flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-full bg-[#5865F2] text-white text-3xl shadow-md">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#5865F2"/><path d="M24.5 21.167c-1.167.5-2.417.833-3.75 1.083-.333-.5-.667-1.083-.917-1.583 1.75-.25 3.333-.667 4.75-1.25.083.583.083 1.167-.083 1.75zm-13 1.083c-1.333-.25-2.583-.583-3.75-1.083-.167-.583-.167-1.167-.083-1.75 1.417.583 3 .917 4.75 1.25-.25.5-.583 1.083-.917 1.583zm10.083-2.083c-2.083.333-4.25.333-6.333 0-.25-.5-.5-1.083-.667-1.667 2.25.333 4.5.333 6.75 0-.167.584-.417 1.167-.75 1.667zm-8.25-2.25c-2.083-.5-3.917-1.25-5.25-2.167.25-1.167.833-2.25 1.667-3.167 1.25.917 2.833 1.667 4.75 2.167-.25.667-.417 1.334-.417 2.167zm13.334-2.167c.834.917 1.417 2 1.667 3.167-1.333.917-3.167 1.667-5.25 2.167 0-.833-.167-1.5-.417-2.167 1.917-.5 3.5-1.25 4.75-2.167zm-6.667-1.167c-2.25-.333-4.417-.917-6.25-1.75.25-.917.667-1.75 1.25-2.5 1.667.75 3.75 1.25 6 1.5-.083.667-.167 1.334-.167 2.25zm8.25-1.75c.583.75 1 1.583 1.25 2.5-1.833.833-4 1.417-6.25 1.75 0-.916-.083-1.583-.167-2.25 2.25-.25 4.333-.75 6-1.5zm-7.25-1.083c-2.083-.25-4.083-.75-5.75-1.5.5-.833 1.167-1.583 2-2.167 1.5.667 3.25 1.083 5 1.25-.083.5-.167 1.083-.25 1.417zm8.5-1.5c.833.584 1.5 1.334 2 2.167-1.667.75-3.667 1.25-5.75 1.5-.083-.334-.167-.917-.25-1.417 1.75-.167 3.5-.583 5-1.25z" fill="#fff"/></svg>
+              </div>
+              <div className="flex-1 text-left">
+                <h2 className="text-xl font-bold text-navy-900 dark:text-white mb-1">Interactive Learning Environment</h2>
+                <p className="text-navy-700 dark:text-navy-200 text-sm mb-2">
+                  A unique initiative by the 18th Executive Committee, the Interactive Learning Environment is a dedicated Discord channel where seniors actively help juniors with notes, resources, and problem-solving. Whether you’re stuck on a tough concept, need past notes, or want to discuss real-world applications, you’ll find a supportive community ready to help you grow.
+                </p>
+                <ul className="list-disc pl-5 text-navy-600 dark:text-navy-300 text-xs mb-2">
+                  <li>Get help with coursework, assignments, and exam prep</li>
+                  <li>Access curated notes and resources from seniors</li>
+                  <li>Ask questions and get real-time answers</li>
+                  <li>Collaborate on problem-solving and projects</li>
+                  <li>Build connections across batches</li>
+                </ul>
+                <a
+                  href="https://discord.gg/CaKVvnE9z"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-2 px-5 py-2.5 bg-[#5865F2] text-white font-semibold rounded-lg shadow hover:bg-[#4752c4] transition-colors"
+                >
+                  Join the Discord Channel
+                </a>
+              </div>
+            </div>
+          </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -644,83 +819,122 @@ export default function LibraryClient({ semesters }: { semesters: Semester[] }) 
                       layout: { duration: 0.3 },
                     }}
                   >
-                    <TiltCard
-                      href={sem.driveLink}
-                      className="group relative block rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-gold-500/20 transition-shadow duration-500 cursor-pointer"
-                    >
-                      {/* Background image with gradient overlay */}
-                      <div className="relative h-52 sm:h-60 overflow-hidden">
-                        <div
-                          className="absolute inset-0 transition-transform duration-700 group-hover:scale-110"
-                          style={{
-                            backgroundImage: "url(/library.webp)",
-                            backgroundSize: "300% 300%",
-                            backgroundPosition:
-                              bgPositions[(sem.number - 1) % bgPositions.length],
-                          }}
-                        />
-                        {/* Dark gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 group-hover:from-black/70 group-hover:via-black/30 group-hover:to-transparent transition-all duration-500" />
+                    {(!sem.subjects || sem.subjects.length === 0 || !sem.driveLink) ? (
+                      <div className="group relative block rounded-2xl overflow-hidden shadow-lg bg-slate-100 dark:bg-navy-900/60 flex flex-col items-center justify-center h-52 sm:h-60 text-center p-6">
+                        <Sparkles size={40} className="mx-auto mb-3 text-gold-400" />
+                        <h3 className="text-lg font-bold text-slate-700 dark:text-white mb-1">{sem.name}</h3>
+                        <p className="text-slate-500 dark:text-navy-300 text-sm mb-2">Coming Soon</p>
+                        <a
+                          href="https://discord.gg/CaKVvnE9z"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block mt-2 px-4 py-2 bg-[#5865F2] text-white font-semibold rounded-lg shadow hover:bg-[#4752c4] transition-colors text-xs"
+                        >
+                          Contribute Resources
+                        </a>
+                      </div>
+                    ) : (
+                      <TiltCard
+                        href={sem.driveLink}
+                        className="group relative block rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-gold-500/20 transition-shadow duration-500 cursor-pointer"
+                      >
+                        {/* Background image with gradient overlay */}
+                        <div className="relative h-52 sm:h-60 overflow-hidden">
+                          <div
+                            className="absolute inset-0 transition-transform duration-700 group-hover:scale-110"
+                            style={{
+                              backgroundImage: "url(/library.webp)",
+                              backgroundSize: "300% 300%",
+                              backgroundPosition:
+                                bgPositions[(sem.number - 1) % bgPositions.length],
+                            }}
+                          />
+                          {/* Dark gradient overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 group-hover:from-black/70 group-hover:via-black/30 group-hover:to-transparent transition-all duration-500" />
 
-                        {/* Semester number */}
-                        <div className="absolute top-3 left-3 z-10">
-                          <span className="text-[10px] font-bold tracking-widest uppercase text-white/80 bg-white/10 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
-                            SEM {sem.number}
-                          </span>
-                        </div>
+                          {/* Semester number */}
+                          <div className="absolute top-3 left-3 z-10">
+                            <span className="text-[10px] font-bold tracking-widest uppercase text-white/80 bg-white/10 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+                              SEM {sem.number}
+                            </span>
+                          </div>
 
-                        {/* ExternalLink indicator */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
-                          <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20">
-                            <ExternalLink size={20} className="text-white" />
+                          {/* ExternalLink indicator */}
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
+                            <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20">
+                              <ExternalLink size={20} className="text-white" />
+                            </div>
+                          </div>
+
+                          {/* Bottom content */}
+                          <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+                            <h3 className="text-white text-lg sm:text-xl font-bold drop-shadow-lg">
+                              {sem.name}
+                            </h3>
+                            <p className="text-white/60 text-xs mt-0.5 group-hover:text-white/80 transition-colors">
+                              Click to open Google Drive
+                            </p>
                           </div>
                         </div>
 
-                        {/* Bottom content */}
-                        <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-                          <h3 className="text-white text-lg sm:text-xl font-bold drop-shadow-lg">
-                            {sem.name}
-                          </h3>
-                          <p className="text-white/60 text-xs mt-0.5 group-hover:text-white/80 transition-colors">
-                            Click to open Google Drive
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Matched subjects panel */}
-                      <AnimatePresence>
-                        {isSearching && matchedSubjects.length > 0 && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="bg-slate-50 dark:bg-navy-900/60 px-3 py-2.5 space-y-1 border-t border-slate-100 dark:border-navy-800">
-                              {matchedSubjects.slice(0, 4).map((name, si) => (
-                                <div key={si} className="flex items-center gap-2">
-                                  <div className="w-1 h-1 rounded-full bg-gold-500 shrink-0" />
-                                  <span className="text-[11px] text-slate-600 dark:text-navy-300 truncate">
-                                    {name}
-                                  </span>
-                                </div>
-                              ))}
-                              {matchedSubjects.length > 4 && (
-                                <p className="text-[10px] text-slate-400 dark:text-navy-500 pl-3">
-                                  +{matchedSubjects.length - 4} more
-                                </p>
-                              )}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </TiltCard>
+                        {/* Matched subjects panel */}
+                        <AnimatePresence>
+                          {isSearching && matchedSubjects.length > 0 && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="bg-slate-50 dark:bg-navy-900/60 px-3 py-2.5 space-y-1 border-t border-slate-100 dark:border-navy-800">
+                                {matchedSubjects.slice(0, 4).map((name, si) => (
+                                  <div key={si} className="flex items-center gap-2">
+                                    <div className="w-1 h-1 rounded-full bg-gold-500 shrink-0" />
+                                    <span className="text-[11px] text-slate-600 dark:text-navy-300 truncate">
+                                      {name}
+                                    </span>
+                                  </div>
+                                ))}
+                                {matchedSubjects.length > 4 && (
+                                  <p className="text-[10px] text-slate-400 dark:text-navy-500 pl-3">
+                                    +{matchedSubjects.length - 4} more
+                                  </p>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </TiltCard>
+                    )}
                   </motion.div>
                 ))}
               </AnimatePresence>
             </motion.div>
           )}
+
+          {/* ── Bored learning section ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.75, duration: 0.5 }}
+            className="max-w-md mx-auto my-12 text-center"
+          >
+            <p className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+              Feeling stuck?
+            </p>
+            <button
+              onClick={handleRefresh}
+              className="px-6 py-3 bg-gold-500 text-white rounded-lg shadow hover:bg-gold-600 transition-colors"
+            >
+              Bored learning?
+            </button>
+            {mindRefresh && (
+              <p className="mt-4 text-sm text-slate-700 dark:text-navy-300">
+                💡 {mindRefresh}
+              </p>
+            )}
+          </motion.div>
 
           {/* ── Bottom CTA ── */}
           <motion.div

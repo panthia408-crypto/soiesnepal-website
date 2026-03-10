@@ -2,12 +2,49 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Target, Lightbulb, Cog } from "lucide-react";
+
+const initialFacts: string[] = [
+  "Industrial Engineering (IE) focuses on optimizing complex systems.",
+  "IE at IOE Pulchowk started in the 1960s.",
+  "Thapathali Campus is under IOE, TU.",
+  "SOIES stands for Society of Industrial Engineering Students.",
+  "IE uses tools like Pareto rule, Gantt charts, and Six Sigma.",
+  "Subjects include Thermodynamics, Fluid Mechanics, Quality Control.",
+  "Nepal introduced IE curriculum in 1961 at Pulchowk.",
+  "IOE was established in 1930 by the Nepalese government.",
+  "Industrial engineers often work in manufacturing and healthcare.",
+  "Thapathali campus is located in central Kathmandu.",
+  "IE aims to reduce waste and increase productivity.",
+  "SOIES Nepal holds annual conferences and workshops.",
+  "IOE is affiliated to Tribhuvan University.",
+  "IE graduates can become operations managers or consultants.",
+  "IE combines engineering, math, and management principles.",
+  "Nepal's first IE department was at Pulchowk Campus.",
+  "Thapathali has CAD and other engineering labs.",
+  "Many IE students intern at NEA and NOC.",
+  "IE plays a role in improving supply chain systems.",
+  "Lean manufacturing is a core topic in IE.",
+  // extend with more unique facts as desired
+];
 
 export default function AboutSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const [currentFact, setCurrentFact] = useState<string | null>(null);
+
+  const factPool = useRef<string[]>([...initialFacts]);
+
+  const generateFact = () => {
+    if (factPool.current.length === 0) {
+      // refill if exhausted
+      factPool.current = [...initialFacts];
+    }
+    const idx = Math.floor(Math.random() * factPool.current.length);
+    const fact = factPool.current.splice(idx, 1)[0];
+    return fact;
+  };
 
   return (
     <section id="about" className="py-24 bg-white dark:bg-navy-950 relative overflow-hidden">
@@ -36,7 +73,7 @@ export default function AboutSection() {
               is to enhance efficiency, innovation, and problem-solving within
               Nepal&apos;s industrial sector.
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               <a
                 href="#events"
                 className="px-6 py-3 bg-gradient-to-r from-gold-500 to-gold-600 text-navy-950 font-bold rounded-lg text-sm hover:from-gold-400 hover:to-gold-500 transition-all shadow-lg shadow-gold-500/20"
@@ -99,6 +136,27 @@ export default function AboutSection() {
                 </div>
               </motion.div>
             ))}
+          {/* random facts button under features */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.5 }}
+            className="text-center mt-6"
+          >
+            <button
+              onClick={() => {
+                setCurrentFact(generateFact());
+              }}
+              className="px-5 py-2 bg-gold-500 text-white rounded-lg shadow hover:bg-gold-600 transition-colors"
+            >
+              Random IE Fact
+            </button>
+            {currentFact && (
+              <p className="mt-3 text-sm text-slate-700 dark:text-navy-300">
+                💡 {currentFact}
+              </p>
+            )}
+          </motion.div>
           </motion.div>
         </div>
       </div>

@@ -1,6 +1,8 @@
 "use client";
 
+
 // Framer Motion fully removed for performance
+import Image from "next/image";
 import { Download, FileText, BookOpen, Pen, Sparkles, Clock } from "lucide-react";
 
 interface Journal {
@@ -69,7 +71,15 @@ export default function JournalClient({ journals }: { journals: Journal[] }) {
               >
                 <div className="w-14 h-14 rounded-lg bg-slate-100 dark:bg-navy-800 flex items-center justify-center shrink-0 overflow-hidden">
                   {journal.cover ? (
-                    <img src={journal.cover} alt={journal.title} className="w-full h-full object-cover" loading="eager" fetchPriority="high" />
+                    <Image
+                      src={journal.cover}
+                      alt={`Cover of journal: ${journal.title}`}
+                      width={56}
+                      height={56}
+                      className="w-full h-full object-cover"
+                      loading="eager"
+                      priority={i === 0}
+                    />
                   ) : (
                     <FileText size={24} className="text-gold-400" />
                   )}

@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -21,6 +22,15 @@ export const metadata: Metadata = {
     "Engineering Students",
     "Thapathali",
   ],
+  icons: {
+    icon: [
+      {
+        url: "/soies-favicon-2026.png?v=4",
+        href: "/soies-favicon-2026.png?v=4",
+      },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -41,7 +51,9 @@ export default function RootLayout({
         <meta name="twitter:title" content="SOIES Nepal - Society of Industrial Engineering Students" />
         <meta name="twitter:description" content="Empowering Industrial Engineering for Nepal's Future. Society of Industrial Engineering Students (SOIES) Nepal." />
         <meta name="twitter:image" content="/og-image.png" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#FFD700" />
+        <link rel="canonical" href="https://soiesnepal.org/" />
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-slate-50 dark:bg-navy-950 text-slate-900 dark:text-white`}>
         <ThemeProvider>

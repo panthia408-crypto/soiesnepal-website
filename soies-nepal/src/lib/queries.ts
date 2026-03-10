@@ -6,6 +6,7 @@ export const heroQuery = `*[_type == "hero"][0]{
   "heroImageUrl": images[0].asset->url
 }`;
 
+// full queries (used on their respective directory pages)
 export const eventsQuery = `*[_type == "event"] | order(eventDate desc){
   _id,
   title,
@@ -19,6 +20,29 @@ export const eventsQuery = `*[_type == "event"] | order(eventDate desc){
 }`;
 
 export const noticesQuery = `*[_type == "notice"] | order(_createdAt desc){
+  _id,
+  title,
+  description,
+  category,
+  showAsPopup,
+  "imageUrl": image.asset->url,
+  "pdf": pdf.asset->url
+}`;
+
+// lightweight versions for the home page – only the most recent items
+export const homeEventsQuery = `*[_type == "event"] | order(eventDate desc)[0...5]{
+  _id,
+  title,
+  eventDate,
+  description,
+  category,
+  status,
+  winnerName,
+  tutorName,
+  "images": images[].asset->url
+}`;
+
+export const homeNoticesQuery = `*[_type == "notice"] | order(_createdAt desc)[0...5]{
   _id,
   title,
   description,
